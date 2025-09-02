@@ -11,12 +11,9 @@ final class DoctorsViewModel: ObservableObject {
     @Published private(set) var doctors: [Doctor] = []
     @Published private(set) var filtered: [Doctor] = []
     
-    @Published var sortOption: SortOption = .price { didSet { applyFilters() } }
-    @Published var ascending: Bool = true {
-        didSet {
-            applyFilters()
-        }
-    }
+    @Published var sortOption: SortOption = .price { didSet { applyFilters() }}
+    @Published var ascending: Bool = true {didSet { applyFilters() }}
+    @Published var searchText: String = "" { didSet {applyFilters() }}
     
     enum SortOption {
         case price, seniority, rating
@@ -40,7 +37,9 @@ final class DoctorsViewModel: ObservableObject {
     }
     
     private func applyFilters() {
-        filtered = doctors.sorted { firstDoc, secDoc in
+        var result = searchQuery()
+        
+        result.sort { firstDoc, secDoc in
             switch sortOption {
             case .price:
                 return ascending ? (firstDoc.minimalPrice ?? .max) < (secDoc.minimalPrice ?? .max)
@@ -52,7 +51,18 @@ final class DoctorsViewModel: ObservableObject {
                 return ascending ? firstDoc.ratingValue > secDoc.ratingValue
                                     : firstDoc.ratingValue < secDoc.ratingValue
             }
-            
+        }
+        
+        self.filtered = result
+    }
+    
+    private func searchQuery() -> [Doctor] {
+        guard !searchText.isEmpty else { return doctors }
+        let lowercasedQuery = searchText.lowercased()
+        return doctors.filter { doctor in
+            doctor.firstName.lowercased().contains(lowercasedQuery) ||
+            doctor.lastName.lowercased().contains(lowercasedQuery) ||
+            doctor.patronymic?.lowercased().contains(lowercasedQuery) ?? false
         }
     }
 }

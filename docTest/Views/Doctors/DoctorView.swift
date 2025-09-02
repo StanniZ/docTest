@@ -12,9 +12,7 @@ struct DoctorView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-//            title
-//                .padding(.bottom, 16)
-            VStack(alignment: .leading, spacing: 12){
+            VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 16) {
                     doctorPhoto
                     doctorInfo

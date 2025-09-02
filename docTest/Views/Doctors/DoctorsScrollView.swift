@@ -9,7 +9,6 @@ import SwiftUI
 struct DoctorsScrollView: View {
     @ObservedObject var viewModel: DoctorsViewModel
 
-    @State private var searchText = ""
     @State private var selectedDoctorId: String?
 
     var body: some View {
@@ -17,7 +16,7 @@ struct DoctorsScrollView: View {
             VStack(spacing: 16) {
                 TitleBar()
 
-                SearchBar(text: $searchText)
+                SearchBar(text: $viewModel.searchText)
 
                 SortSegmentedBar(selected: $viewModel.sortOption,
                                  ascending: $viewModel.ascending)
@@ -108,6 +107,7 @@ struct SearchBar: View {
                 .textFieldStyle(.plain)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
+                .keyboardType(.default)
         }
         .padding(9)
         .background(.white)
